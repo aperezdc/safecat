@@ -1,6 +1,0 @@
-1.13
-
-The revision number of the software being distributed. This should not
-need to be changed by the user. If you modify this code, and then use
-it for any purpose, you SHOULD change this number; maybe to something
-like "old-version + 1"."your name".
