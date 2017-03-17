@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 /* Support for large files (on Linux systems, if the appropriate
