@@ -1,0 +1,350 @@
+.TH safecat 1
+.SH "NAME"
+safecat \- safely write data to a file
+
+.SH "SYNOPSIS"
+.B safecat 
+.I tempdir
+.I destdir
+
+.SH "INTRODUCTION"
+.I safecat
+is a program which implements Professor Daniel Bernstein's 
+.I maildir
+algorithm to copy 
+.I stdin
+safely to a file in a specified directory.  With
+.IR safecat ,
+the user is offered two assurances.  First, if 
+.I safecat
+returns a 
+successful exit status, then all data is guaranteed to be 
+saved in the destination directory.  
+Second, if a file exists in the destination
+directory, placed there by 
+.IR safecat , 
+then the file is guaranteed
+to be complete.
+
+When saving data with
+.IR safecat ,
+the user specifies a destination directory, but not a file name.
+The file name is selected by
+.I safecat
+to ensure that no filename collisions occur, even if many
+.I safecat
+processes and other programs implementing the
+.I maildir
+algorithm are writing to the directory simultaneously.  If particular
+filenames are desired, then the user should rename the file after
+.I safecat
+completes.  In general, when spooling data with 
+.IR safecat ,
+a single, separate process should handle naming, collecting, and deleting
+these files.  Examples of such a process are daemons, cron jobs, and
+mail readers.
+
+.SH "RELIABILITY ISSUES"
+A machine may crash while data is being written to disk.
+For many programs, including many mail delivery agents,
+this means that the data will be silently truncated.
+Using Professor Bernstein's
+.IR maildir 
+algorithm,
+every file is guaranteed complete or nonexistent.
+
+Many people or programs may write data to a common "spool"
+directory.  Systems like 
+.I mh-mail
+store files using numeric names in a directory.  Incautious
+writing to files can result in a collision, in which one write
+succeeds and the other appears to succeed but fails.
+Common strategies to resolve this problem involve creation of
+lock files or other synchronizing mechanisms, but such mechanisms
+are subject to failure.  Anyone who has deleted $HOME/.netscape/lock
+in order to start netscape can attest to this.  The 
+.IR maildir
+algorithm is immune to this problem because it uses no locks
+at all.
+
+.SH "THE MAILDIR ALGORITHM"
+As described in maildir(5),
+.I safecat 
+applies the 
+.I maildir
+algorithm by writing data in six steps.
+First, it
+.B stat()s
+the two directories
+.I tempdir
+and
+.IR destdir ,
+and exits unless both directories exist and are writable.
+Second, it 
+.B stat()s
+the name
+.BR tempdir/\fItime.pid.host ,
+where
+.I time
+is the number of seconds since the beginning of 1970 GMT,
+.I pid
+is the program's process ID,
+and
+.I host
+is the host name.
+Third, if
+.B stat()
+returned anything other than ENOENT,
+the program sleeps for two seconds, updates
+.IR time ,
+and tries the
+.B stat()
+again, a limited number of times.
+Fourth, the program
+creates
+.BR tempdir/\fItime.pid.host .
+Fifth, the program
+.I NFS-writes
+the message to the file.
+Sixth, the program
+.BR link() s
+the file to
+.BR destdir/\fItime.pid.host .
+At that instant the data has been successfully written.
+
+In addition,
+.I safecat
+starts a 24-hour timer before
+creating
+.BR tempdir/\fItime.pid.host ,
+and aborts the write
+if the timer expires.
+Upon error, timeout, or normal completion,
+.I safecat
+attempts to
+.B unlink()
+.BR tempdir/\fItime.pid.host .
+
+.SH "EXIT STATUS"
+An exit status of 0 (success) implies that all data has been safely
+committed to disk.  A non-zero exit status should be considered
+to mean failure, though there is an outside chance that 
+.I safecat
+wrote the data successfully, but didn't think so.
+
+Note again that if a file appears in the destination directory,
+then it is guaranteed to be complete.
+
+If
+.I safecat
+completes successfully, then it will print the name of the newly
+created file (without its path) to standard output.
+
+.SH "SUGGESTED APPLICATIONS"
+Exciting uses for
+.I safecat
+abound, obviously, but a word may be in order to suggest what
+they are.
+
+If you run Linux and use qmail instead of sendmail, you should
+consider converting your inbox to
+.I maildir 
+for its superior reliability.  If your home directory is NFS
+mounted, qmail forces you to use 
+.IR maildir .
+On the downside, the lovely tool
+.IR procmail ,
+which filters your spam, does not know
+.IR maildir .
+Rather than running the patched 
+.IR procmail , 
+you might consider
+using 
+.I safecat
+to deliver to your inbox.  That allows you to use the latest
+.I procmail 
+without waiting for the 
+.I maildir
+patches to be applied to it.
+
+(Note: the previous paragraph was written before
+.I procmail
+started handling maildir delivery. Since maildir delivery has been added,
+my point is made
+.IR stronger !
+.IR Procmail 's
+maildir support does not comply with Dan's algorithm, and so does
+not offer the reliability promised by maildir delivery.
+.I Procmail
+plus
+.I safecat
+has always offered reliable maildir delivery. Another victory for
+modularity!)
+
+If you write CGI applications to collect data over the World Wide
+Web, you might find
+.I safecat
+useful.  Web applications suffer from two major problems.  Their
+performance suffers from every stoppage or bottleneck in the internet;
+they cannot afford to introduce performance problems of their own.
+Additionally, web applications should NEVER leave the server and
+database in an inconsistent state.  This is likely, however, if 
+CGI scripts directly frob some database--particularly if the database
+is overloaded or slow.  What happens when users get bored and
+click "Stop" or "Back"?  Maybe the database activity completes.  Maybe
+the CGI script is killed, leaving the DB in an inconsistent state.
+
+Consider the following strategy.  Make your CGI script dump its
+request to a spool directory using
+.IR safecat .
+Immediately return a receipt to the browser.  Now the browser has
+a complete guarantee that their submission is received, and the
+perceived performance of your web application is optimal.
+
+Meanwhile, a spooler daemon notices the fresh request, snatches it and
+updates the database.  Browsers can be informed that their
+request will be fulfilled in X minutes.  The result is optimal 
+performance despite a capricious internet.  In addition, users can be
+offered nearly 100% reliability.
+
+.SH EXAMPLES
+To convince sendmail to use 
+.I maildir
+for message delivery, add the following line to your .forward
+file:
+.na
+.nf
+.sp
+.B |SAFECAT HOME/Maildir/tmp HOME/Maildir/new || exit 75 #USERNAME
+.sp
+.fi
+where 
+.B SAFECAT
+is the complete path of the 
+.I safecat 
+program,
+.B HOME
+is the complete path to your home directory, and
+.B USERNAME 
+is your login name. Making this change is likely to pay off; many
+campuses and companies mount user home directories with NFS.  Using 
+.I maildir
+to deliver to your inbox folder helps ensure that your mail will not
+be lost due to some NFS error.  Of course, if you are a System
+Administrator, you should consider switching to qmail.
+
+To run a program and catch its output safely into some directory,
+you can use a shell script like the following.
+.na
+.nf
+.sp
+#!/bin/bash
+
+MYPROGRAM=cat              # The program you want to run
+TEMPDIR=/tmp               # The name of a temporary directory
+DESTDIR=$HOME/work/data    # The directory for storing information
+
+try() { $* 2>/dev/null || echo NO 1>&2 }
+
+set `( try $MYPROGRAM | try safecat $TEMPDIR $DESTDIR ) 2>&1`
+test "$?" = "0"  || exit -1
+test "$1" = "NO" && { rm -f $DESTDIR/$2; exit -1; }
+.sp
+.fi
+This script illustrates the pitfalls of writing secure programs
+with the shell.  The script assumes that your program might 
+generate some output, but then fail to complete.  There is no
+way for
+.I safecat
+to know whether your program completed successfully or not, because of
+the semantics of the shell.  As a result, safecat might create a file
+in the data directory which is "complete" but not useful.  The shell
+script deletes the file in that case.
+
+More generally, the safest way to use 
+.I safecat
+is from within a C program which invokes safecat with
+.I fork()
+and
+.IR execve() .
+The parent process can the simply 
+.I kill()
+the 
+.I safecat
+process if any problems develop, and optionally can try again.  Whether
+to go to this trouble depends upon how serious you are about protecting
+your data.  Either way,
+.I safecat
+will not be the weak link in your data flow.
+
+.SH BUGS
+In order to perform the last step and
+.I link()
+the temporary file into the destination directory, both directories
+must reside in the same file system.  If they do not, 
+.I safecat
+will quietly fail every time.  In Professor Bernstein's implementation
+of
+.IR maildir ,
+the temporary and destination directories are required to belong
+to the same parent directory, which essentially avoids this problem.
+We relax this requirement to provide some flexibility, at the cost
+of some risk.  Caveat emptor.
+
+Although
+.I safecat
+cleans up after itself, it may
+sometimes fail to delete the temporary file located in 
+.IR tempdir .
+Since safecat times out after 24 hours, you may freely delete any
+temporary files older than 36 hours.  Files newer than 36 hours 
+should be left alone.  A system of data flow involving safecat should
+include a cron job to clean up temporary files, or should obligate
+consumers of the data to do the cleanup, or both.  In the case of
+qmail, mail readers using
+.I maildir
+are expected to scan and clean up the temporary directory.
+
+The guarantee of safe delivery of data is only "as certain as UNIX
+will allow."  In particular, a disk hardware failure could result
+in 
+.I safecat 
+concluding that the data was safe, when it was not.  Similarly,
+a successful exit status from 
+.I safecat
+is of no value if the computer, its disks and backups all explode
+at some subsequent time.  
+
+In other words, if your data is vital to you, then you won't just use
+.IR safecat .
+You'll also invest in good equipment (possibly including a RAID
+disk), a UPS for the server and drives, a regular backup schedule,
+and competent system administration.  For many purposes, however,
+.I safecat
+can be considered 100% reliable.
+
+.SH CREDITS
+The 
+.I maildir
+algorithm was devised by Professor Daniel Bernstein, the author of
+qmail.  Parts of this manpage borrow directly from maildir(5) by
+Professor Bernstein.  In particular, the section "THE MAILDIR ALGORITHM"
+transplants his explanation of the
+.I maildir
+algorithm in order to illustrate that 
+.I safecat
+complies with it.
+
+The code for 
+.I safecat
+was written by the present author, and not borrowed explicitly from
+qmail code.  However, qmail code certainly influenced the present
+author, since it was studied at great length in order to understand
+the algorithm precisely.  
+
+Copyright (c) 2000, Len Budney. All rights reserved.
+
+.SH "SEE ALSO"
+mbox(5),
+qmail-local(8),
+maildir(5)

@@ -1,0 +1,5 @@
+/usr/local
+
+The first line of this file gives the top-level directory for installation.
+Files will be installed in the appropriate subdirectories; bin, lib,
+include, man and etc.

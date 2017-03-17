@@ -1,0 +1,31 @@
+20030701 Release 1.11
+20030701 Fixed overflow in tempfile creation. TNX Toby Betts, Guy Garnett
+20030603 Release 1.10
+20030603 Fixed errors in conf-version. TNX Peter van Dijk
+20030603 Fixed glibc-induced incompatibility. TNX all who bugged me on this
+20030603 Fixed omission of version string for "ident". TNX Peter van Dijk
+20030603 Changed filename to conform to updated maildir spec.
+20020523 Release 1.9
+20020523 Fixed test for type of uint64.
+20020523 Cast added so timestamps aren't munged on Solaris. TNX Paul Grayson
+20010414 Release 1.8
+20010414 Install dirs now created if needed. TNX Peter Bray
+20010414 Added RPM spec
+20010409 Release 1.6
+20010409 Removed obsolete autoconf files from distribution. TNX Peter Bray
+20010409 Fixed path in stat() of temporary file. TNX Erik Sjolund
+20010212 Release 1.5
+20010212 BUGFIX: Failed to delete tempfile if link() fails. TNX Peter van Dijk
+20010212 BUGFIX: Tempfile not deleted if writefile() fails. TNX Peter van Dijk
+20010212 Safecat tries 5 times now, like docs say, not 6.   TNX Peter van Dijk
+20010212 Added comment to manpage about procmail's maildir support
+20010212 Added CHANGES file
+20001121 Release 1.4
+20001121 Deleted bogosities like unused "configure" script
+20000721 Release 1.3
+20000721 I/O buffers 1K->.5K; same performance, smaller footprint
+20000721 Cleaned out unused variables left over from previous versions
+20000229 Release 1.2
+20000229 Changed license from GPL to BSD with the "Don't Bother Dan" clause
+20000229 Completely rewrote safecat to use code borrowed from Dan Bernstein
+19991209 Release 1.1

@@ -1,0 +1,31 @@
+.TH maildir 1
+.SH "NAME"
+maildir \- safely write data to a qmail-style maildir
+
+.SH "SYNOPSIS"
+.B maildir
+.I dir
+
+.SH "INTRODUCTION"
+.I maildir
+is a shell script which invokes
+.IR safecat .
+It is equivalent to
+.I safecat
+.IR dir /tmp
+.IR dir /new.
+It saves a little typing for those who want to use qmail maildirs,
+which have a fixed structure.
+.IR safecat ,
+on the other hand, allows the user to have one temporary directory for
+many spool directories. This is occasionally useful; some people don't
+like to multiply the number of places which need to be periodically
+cleaned up.
+
+Copyright (c) 2000, Len Budney. All rights reserved.
+
+.SH "SEE ALSO"
+safecat(1)
+mbox(5),
+qmail-local(8),
+maildir(5)
