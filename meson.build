@@ -6,15 +6,12 @@ if cc.has_argument('-Wno-misleading-indentation')
 endif
 
 config = configuration_data()
-config.set('VERSION', meson.project_version())
 config.set('SIZEOF_LONG_LONG', cc.sizeof('long long'))
 config.set('SIZEOF_LONG', cc.sizeof('long'))
 config.set10('HAVE_ERRNO_H', cc.has_header('errno.h'))
 config.set10('HAVE_STDINT_H', cc.has_header('stdint.h'))
 config.set10('HAVE_SIGACTION', cc.has_function('sigaction'))
 
-configure_file(configuration: config,
-	input: 'version.h.in', output: 'version.h')
 configure_file(configuration: config,
 	input: 'error_no.h.in', output: 'error_no.h')
 configure_file(configuration: config,

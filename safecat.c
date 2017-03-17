@@ -16,7 +16,6 @@
 #include "strerr.h"
 #include "subfd.h"
 #include "tempfile.h"
-#include "version.h"
 #include "writefile.h"
 #include <sys/types.h>
 #include <sys/stat.h>
