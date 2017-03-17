@@ -46,3 +46,7 @@ The following is a shortlist of the cleanups which have been already done:
 - Include the needed headers to ensure function definitions are taken from the
   system headers, instead of local definitions which might not match those of
   the C library being used.
+
+- Removed reading `$DTLINE` and `$RPLINE` from the environment. This was in
+  `writefile.c` which was imported from the qmail source tree, and makes no
+  sense for `safecat` (and kill 90 LOC).
