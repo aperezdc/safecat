@@ -1,0 +1,6 @@
+#ifndef HASSGACT_H
+#define HASSGACT_H
+
+#define HASSIGACTION @HAVE_SIGACTION@
+
+#endif /* !HASSGACT_H */

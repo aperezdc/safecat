@@ -1,0 +1,12 @@
+#ifndef ERROR_NO_H
+#define ERROR_NO_H 1
+
+#mesondefine HAVE_ERRNO_H
+
+#if HAVE_ERRNO_H
+# include <errno.h>
+#else
+extern int errno;
+#endif /* HAVE_ERRNO_H */
+
+#endif /* ERROR_NO_H */
