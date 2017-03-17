@@ -6,11 +6,8 @@ if cc.has_argument('-Wno-misleading-indentation')
 endif
 
 config = configuration_data()
-config.set10('HAVE_ERRNO_H', cc.has_header('errno.h'))
 config.set10('HAVE_SIGACTION', cc.has_function('sigaction'))
 
-configure_file(configuration: config,
-	input: 'error_no.h.in', output: 'error_no.h')
 configure_file(configuration: config,
 	input: 'hassgact.h.in', output: 'hassgact.h')
 

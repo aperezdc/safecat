@@ -1,7 +1,7 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include "error_no.h"
+#include <errno.h>
 
 extern int error_intr;
 extern int error_nomem;
