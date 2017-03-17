@@ -26,7 +26,7 @@ void mk_tempfile(stralloc *tmpf) {
   taia_tai(&now,&sec);
 
   /* Record the second timestamp on the string. */
-  secbuf[fmt_uint64(secbuf,(uint64) sec.x - 4611686018427387904)] = '\0';
+  secbuf[fmt_uint64(secbuf,(uint64_t) sec.x - 4611686018427387904)] = '\0';
   if (!stralloc_cats(tmpf, secbuf)) die_nomem();
   
   /* Append the microsecond timestamp to the string. */

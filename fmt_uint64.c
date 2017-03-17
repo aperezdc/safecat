@@ -1,9 +1,9 @@
 #include "fmt.h"
-#include "uint64.h"
+#include <stdint.h>
 
-unsigned int fmt_uint64(s,u) register char *s; register uint64 u;
+unsigned int fmt_uint64(s,u) register char *s; register uint64_t u;
 {
-  register unsigned int len; register uint64 q;
+  register unsigned int len; register uint64_t q;
   len = 1; q = u;
   while (q > 9) { ++len; q /= 10; }
   if (s) {

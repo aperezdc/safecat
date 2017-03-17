@@ -1,10 +1,10 @@
 #ifndef TAI_H
 #define TAI_H
 
-#include "uint64.h"
+#include <stdint.h>
 
 struct tai {
-  uint64 x;
+  uint64_t x;
 } ;
 
 extern void tai_now();

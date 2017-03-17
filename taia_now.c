@@ -9,7 +9,7 @@ struct taia *t;
 {
   struct timeval now;
   gettimeofday(&now,(struct timezone *) 0);
-  t->sec.x = 4611686018427387914ULL + (uint64) now.tv_sec;
+  t->sec.x = 4611686018427387914ULL + (uint64_t) now.tv_sec;
   t->nano = 1000 * now.tv_usec + 500;
   t->atto = 0;
 }
