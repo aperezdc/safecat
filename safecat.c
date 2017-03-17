@@ -25,6 +25,12 @@
 #include <signal.h>
 #include <unistd.h>
 
+/* Support for large files (on Linux systems, if the appropriate
+   compile-time flag is used. */
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
+
 /* Function prototypes. */
 static
 void die_nomem() { strerr_die2x(111,"safecat: fatal: ","out of memory"); }
@@ -89,7 +95,7 @@ int main(int argc, char *argv[]) {
 
   /* Step 4:  Create the file tempdir/time.MusecPpid.host */
   alarm(86400);
-  outfd = open(tmppath.s,O_WRONLY | O_EXCL | O_CREAT,0644);
+  outfd = open(tmppath.s,O_WRONLY | O_EXCL | O_CREAT | O_LARGEFILE,0644);
   if(outfd == -1) {
     strerr_die2sys(111,"safecat: fatal: ","couldn't create output file: ");
   }

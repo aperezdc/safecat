@@ -7,7 +7,7 @@ makelib alloc.o alloc_re.o
 	./makelib alloc.a alloc.o alloc_re.o
 
 alloc.o: \
-compile alloc.c alloc.h error.h
+compile alloc.c alloc.h error_no.h
 	./compile alloc.c
 
 alloc_re.o: \
@@ -79,19 +79,19 @@ error.a: \
 makelib error.o error_str.o
 	./makelib error.a error.o error_str.o
 
-error.h: \
-tryerrno.c compile load error.h1 error.h2
+error_no.h: \
+tryerrno.c compile load error_no.h1 error_no.h2
 	( ( ./compile tryerrno.c && ./load tryerrno && \
 	./tryerrno ) >/dev/null 2>&1 \
-	&& cat error.h1 || cat error.h2 ) > error.h
+	&& cat error_no.h1 || cat error_no.h2 ) > error_no.h
 	rm -f tryerrno.o tryerrno
 
 error.o: \
-compile error.c error.h
+compile error.c error_no.h
 	./compile error.c
 
 error_str.o: \
-compile error_str.c error.h
+compile error_str.c error_no.h
 	./compile error_str.c
 
 fmt_uint64.o: \
@@ -109,7 +109,7 @@ str.a
 	open.a error.a str.a
 
 install.o: \
-compile install.c substdio.h strerr.h error.h open.h readwrite.h \
+compile install.c substdio.h strerr.h error_no.h open.h readwrite.h \
 exit.h buffer.h
 	./compile install.c
 
@@ -119,7 +119,7 @@ load instcheck.o hier.o auto_home.o strerr.a substdio.a error.a str.a
 	error.a str.a
 
 instcheck.o: \
-compile instcheck.c strerr.h error.h readwrite.h exit.h
+compile instcheck.c strerr.h error_no.h readwrite.h exit.h
 	./compile instcheck.c
 
 it: \
@@ -324,7 +324,7 @@ compile strerr_die.c substdio.h subfd.h substdio.h exit.h strerr.h
 	./compile strerr_die.c
 
 strerr_sys.o: \
-compile strerr_sys.c error.h strerr.h
+compile strerr_sys.c error_no.h strerr.h
 	./compile strerr_sys.c
 
 subfderr.o: \
@@ -348,7 +348,7 @@ compile subfdouts.c readwrite.h substdio.h subfd.h substdio.h
 	./compile subfdouts.c
 
 substdi.o: \
-compile substdi.c substdio.h byte.h error.h
+compile substdi.c substdio.h byte.h error_no.h
 	./compile substdi.c
 
 substdio.a: \
@@ -367,7 +367,7 @@ compile substdio_copy.c substdio.h
 	./compile substdio_copy.c
 
 substdo.o: \
-compile substdo.c substdio.h str.h byte.h error.h
+compile substdo.c substdio.h str.h byte.h error_no.h
 	./compile substdo.c
 
 systype: \

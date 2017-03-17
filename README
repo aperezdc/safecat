@@ -40,7 +40,22 @@
   safecat is offered under the terms of the BSD License. The included
   file COPYING is a copy of the license.
 
-  4.  Credits
+
+
+  4.  Caveats
+
+
+  On some systems, handling an email larger than 2GB may cause safecat
+  to fail silently. This is an OS bug; the correct behavior, if large
+  files are not supported, is to return failure upon writing past the
+  supported file size. On those systems that support the O_LARGEFILE
+  flag, mainly Linux, you can turn on large file support by editing
+  conf-cc. I recommend you look into a different tool, such as rsync,
+  for processing files larger than 2GB.
+
+
+
+  5.  Credits
 
 
   The maildir algorithm implemented in safecat was devised by Professor

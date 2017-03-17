@@ -81,4 +81,4 @@ maildir.0
 safecat.0
 tryerrno.o
 tryerrno
-error.h
+error_no.h

@@ -10,7 +10,7 @@ void stat_dir(char *dirname) {
   struct stat filestat;
 
   if(stat(dirname,&filestat) != 0) {
-    strerr_die2sys(111,"safecat: fatal: ","could not stat directory ");
+    strerr_die2sys(111,"safecat: fatal: ","could not stat directory: ");
   }
   if( !S_ISDIR(filestat.st_mode) ) {
     strerr_die2x(111, "safecat: fatal: ","not a directory");

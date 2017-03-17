@@ -1,3 +1,7 @@
+20060409 Added Vadim Druzhin's RPM buildroot support. TNX also Charlie Brady.
+20040816 Added support for Linux LARGEFILE flag to safecat.c.
+20040816 Fixed typo in error message. TNX Daniel Biddle.
+20040816 Changed errno test to include errno.h by default.
 20030701 Release 1.11
 20030701 Fixed overflow in tempfile creation. TNX Toby Betts, Guy Garnett
 20030603 Release 1.10

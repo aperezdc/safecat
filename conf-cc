@@ -1,3 +1,5 @@
 cc -O2
 
-This will be used to compile .c files.
+This will be used to compile .c files. Add any needed flags here; for
+example, if you want support for files larger than 2GB on Linux systems,
+you might add "-D_LARGEFILE64_SOURCE" here.

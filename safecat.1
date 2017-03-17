@@ -323,6 +323,18 @@ and competent system administration.  For many purposes, however,
 .I safecat
 can be considered 100% reliable.
 
+Also note that
+.I safecat
+was designed for spooling email messages; it is not the right tool for
+spooling large files--files larger than 2GB, for example. Some operating
+systems have a bug which causes safecat to fail silently when spooling
+files larger than 2GB. When building
+.IR safecat ,
+you can take advantage of conditional support for large files on Linux;
+see
+.I conf-cc
+for further information.
+
 .SH CREDITS
 The 
 .I maildir
@@ -335,12 +347,12 @@ algorithm in order to illustrate that
 .I safecat
 complies with it.
 
-The code for 
+The original code for 
 .I safecat
-was written by the present author, and not borrowed explicitly from
-qmail code.  However, qmail code certainly influenced the present
-author, since it was studied at great length in order to understand
-the algorithm precisely.  
+was written by the present author, but was since augmented with heavy
+borrowings from qmail code.  However, under no circumstances should the
+author of qmail be contacted concerning safecat bugs; all are the fault,
+and the responsibility, of the present author.
 
 Copyright (c) 2000, Len Budney. All rights reserved.
 

@@ -1,6 +1,6 @@
-extern int errno;
+#include <errno.h>
 
 void main() {
   errno = 0;
-  _exit(0);
+  _exit(errno);
 }

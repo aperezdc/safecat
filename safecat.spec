@@ -1,17 +1,14 @@
-# 
-# Example spec file for cdplayer app... 
-# 
-Summary: Secure File Wiping and Deletion
+Summary: Secure spooling of emails to a qmail maildir
 Name: safecat
-Version: 1.9
-Release: 1
-Copyright: BSD
+Version: 1.13
+Release: v1
+License: BSD
 Group: Applications/File
 Source: http://www.pobox.com/~lbudney/linux/software/safecat/safecat-%{version}.tar.gz
+Patch0: safecat-buildroot.patch
 URL: http://www.pobox.com/~lbudney/linux/software/safecat.html
-Distribution: RedHat 7.2 Contrib
-Packager: Len Budney <lbudney@pobox.com>
-#Buildroot: /tmp/safecat-%{version}
+Packager: Vadim Druzhin <vdruzhin@mail.ru>
+BuildRoot: /var/tmp/%{name}-%{version}-%{release}
 
 %description 
 safecat implements Dan Bernstein's maildir algorithm, copying standard
@@ -33,23 +30,38 @@ from a mail reader.
 
 %prep
 %setup
-echo /usr > conf-root
-#mkdir -p %{buildroot}
+
+# BUILD_ROOT patch
+%patch0
+
+echo "/usr" > conf-root
 
 %build
 make
 
 %install
+
+if [ x"$RPM_BUILD_ROOT" != x"/" -a -d "$RPM_BUILD_ROOT" ]
+  then
+  rm -rf "$RPM_BUILD_ROOT"
+  fi
+
+mkdir -p "$RPM_BUILD_ROOT"
 make setup check
 
 %clean
-#rm -rf $RPM_BUILD_ROOT
+
+if [ x"$RPM_BUILD_ROOT" != x"/" -a -d "$RPM_BUILD_ROOT" ]
+  then
+  rm -rf "$RPM_BUILD_ROOT"
+  fi
 
 %files
-%attr(-,root,root) %doc CHANGES README INSTALL COPYING
-%attr(-,root,root) /usr/bin/safecat
-%attr(-,root,root) /usr/bin/maildir
-%attr(-,root,root) /usr/man/man1/safecat.1
-%attr(-,root,root) /usr/man/man1/maildir.1
-%attr(-,root,root) /usr/man/cat1/safecat.0
-%attr(-,root,root) /usr/man/cat1/maildir.0
+%defattr(-,root,root)
+%doc CHANGES README INSTALL COPYING
+/usr/bin/safecat
+/usr/bin/maildir
+/usr/man/man1/safecat.1.gz
+/usr/man/man1/maildir.1.gz
+/usr/man/cat1/safecat.0
+/usr/man/cat1/maildir.0

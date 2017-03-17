@@ -1,0 +1,11 @@
+--- Makefile.orig	Tue Aug 17 04:50:09 2004
++++ Makefile	Wed Sep 22 16:48:02 2004
+@@ -31,7 +31,7 @@
+ 
+ auto_home.c: \
+ auto-str conf-root
+-	./auto-str auto_home `head -1 conf-root` > auto_home.c
++	./auto-str auto_home $(RPM_BUILD_ROOT)`head -1 conf-root` > auto_home.c
+ 
+ auto_home.o: \
+ compile auto_home.c
