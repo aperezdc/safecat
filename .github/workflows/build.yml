@@ -10,13 +10,29 @@ jobs:
   check:
     name: check
     runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: clang
+            linker: lld
+            pkgs: clang lld
+          - compiler: gcc
+            linker: bfd
+            pkgs: ""
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Install Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt update
-          sudo apt install meson ninja-build
+          sudo apt install -y meson ninja-build ${{ matrix.pkgs }}
       - name: Configure
+        env:
+          CC: ${{ matrix.compiler }}
+          LDFLAGS: -fuse-ld=${{ matrix.linker }}
         run: meson setup _build
       - name: Build
         run: meson compile -C _build
